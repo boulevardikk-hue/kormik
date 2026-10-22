@@ -526,7 +526,7 @@ button{font:inherit;color:inherit;border:0;cursor:pointer}
       <div class="au-pts">Очки: <b id="auPts">0</b> <button class="topup sm" data-topup aria-label="Пополнить">＋</button></div>
     </div>
     <div class="au-body">
-      <div class="au-rules">Каждая ставка стоит очков. После второй ставки запускается таймер на минуту, каждая новая ставка добавляет 5 секунд. Кто поставил последним, забирает банк минус 10%.</div>
+      <div class="au-rules">Каждая ставка стоит очков. После второй ставки запускается таймер на минуту, каждая новая ставка добавляет 5 секунд, но не больше минуты. Кто поставил последним, забирает банк минус 10%.</div>
       <button class="au-hbtn" id="histOpen">📜 История</button>
       <div id="auLots"></div>
       <div class="chat" id="chat">
@@ -1533,7 +1533,7 @@ function auRender(st){
                :'<div class="l2-name dim">Ставок нет</div><div class="l2-id">будь первым!</div>';
     var can=!mine&&S.points>=l.min_bid;
     var btn=mine?'Ты лидер':(S.points<l.min_bid?'Нужно '+l.min_bid:'Сделать ставку');
-    var auto=l.my_auto>0?'Автоставка: ещё '+l.my_auto:'Автоставка (выкл)';
+    var auto=l.my_auto>0?'🤖 Автоставка: ВКЛ':'Автоставка: ВЫКЛ';
     var last=l.last_winner?'<div class="l2-last">🏆 '+esc(l.last_winner.name||'Игрок')+' +'+l.last_winner.payout+'</div>':'<div class="l2-last">&nbsp;</div>';
     return '<div class="lot2'+(l.ends_at?' hot':'')+(mine?' mine':'')+'"><div class="l2-in">'+
       '<div class="l2-h">'+esc(l.title)+'</div>'+last+
@@ -1655,22 +1655,12 @@ function chDo(a,m){
 var AUTO_LOT=0;
 function auAutoOpen(id){
   if(!ONLINE){toast('Автоставка работает только в Telegram');return;}
-  var l=(AU.state&&AU.state.lots||[]).filter(function(x){return x.id===id;})[0];if(!l)return;
-  AUTO_LOT=id;sfx.click();
-  $('#autoT').textContent='Автоставка: '+l.title;
-  $('#autoSub').textContent='Когда тебя перебьют и до конца останется меньше 8 секунд, сервер сам сделает ставку за тебя — даже если игра закрыта. Каждая автоставка стоит '+l.min_bid+' очков.';
-  Array.prototype.forEach.call(document.querySelectorAll('#autoOpts button'),function(b){
-    b.classList.toggle('on',l.my_auto>0&&+b.dataset.n===l.my_auto);});
-  $('#autoNow').textContent=l.my_auto>0?'Сейчас включена: осталось '+l.my_auto+' ставок':'Сейчас выключена';
-  $('#auto').classList.add('on');
+  var l=(AU.state&&AU.state.lots||[]).filter(function(x){return x.id===id;})[0];if(!l||AU.busy)return;
+  var on=!(l.my_auto>0);AU.busy=true;sfx.click();
+  call('autobid',{lot:id,count:on?25:0}).then(function(j){AU.busy=false;auRender(j.auction);haptic('medium');
+    toast(on?'Автоставка включена: перебьём за тебя через секунду, пока хватает очков':'Автоставка выключена');},
+    function(e){AU.busy=false;toast(e.message);});
 }
-Array.prototype.forEach.call(document.querySelectorAll('#autoOpts button'),function(b){
-  b.onclick=function(){
-    var n=+b.dataset.n;$('#auto').classList.remove('on');
-    call('autobid',{lot:AUTO_LOT,count:n}).then(function(j){auRender(j.auction);haptic('medium');
-      toast(n?'Автоставка включена: до '+n+' ставок':'Автоставка выключена');},function(e){toast(e.message);});
-  };});
-
 /* ---------- история аукциона ---------- */
 $('#histOpen').onclick=function(){
   sfx.click();
