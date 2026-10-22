@@ -105,6 +105,44 @@ button{font:inherit;color:inherit;border:0;cursor:pointer}
 #menu .adm-open{margin-top:0;flex:none}
 #upgrade .sub{margin-bottom:12px}
 @media (max-height:700px){.hcard{min-height:250px}.mc{height:62px}.mc img{height:56px}.go4{height:56px;font-size:22px}}
+/* ---------- аукцион: лоты-колонки ---------- */
+#auction{background:linear-gradient(160deg,#0f766e,#134e4a 42%,#1e1b4b)}
+#auLots{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.lot2{border-radius:20px;padding:4px;background:linear-gradient(135deg,#fde68a,#f59e0b 30%,#fef3c7 50%,#d97706 70%,#fde68a);box-shadow:0 10px 22px rgba(0,0,0,.35)}
+.lot2:nth-child(2n){background:linear-gradient(135deg,#c4b5fd,#7c3aed 30%,#ede9fe 50%,#6d28d9 70%,#c4b5fd)}
+.l2-in{border-radius:17px;background:radial-gradient(circle at 50% 25%,#be123c,#4c0519 75%);padding:8px 8px 10px;display:flex;flex-direction:column;align-items:center;text-align:center;height:100%}
+.lot2:nth-child(2n) .l2-in{background:radial-gradient(circle at 50% 25%,#4338ca,#1e1b4b 75%)}
+.l2-h{width:100%;background:rgba(0,0,0,.35);border-radius:10px;padding:5px;font-weight:900;font-size:14px}
+.l2-last{font-size:10px;font-weight:800;color:#fde68a;margin:4px 0 12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.l2-avw{position:relative;margin-top:8px}
+.l2-avw.on:before{content:"👑";position:absolute;top:-17px;left:50%;transform:translateX(-50%);font-size:22px;z-index:1}
+.av.l2-ava{width:96px;height:96px;border-radius:18px;font-size:38px;border:3px solid #fde68a;box-shadow:0 6px 14px rgba(0,0,0,.4)}
+.av.l2-ava.none{background:rgba(255,255,255,.12);color:rgba(255,255,255,.5);border-style:dashed}
+.l2-name{margin-top:6px;font-weight:900;font-size:14px;max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.l2-name.dim{color:rgba(255,255,255,.7)}
+.l2-id{font-size:11px;color:#a5b4fc;font-weight:700}
+.l2-pot{margin-top:8px;font:900 34px "Arial Black",system-ui;color:#fde68a;line-height:1;text-shadow:0 3px 0 rgba(0,0,0,.45)}
+.l2-potl{font-size:10px;font-weight:800;color:#fecdd3}
+.l2-tm{margin-top:8px;width:100%;padding:6px 4px;border-radius:12px;background:rgba(0,0,0,.4);font:900 24px "Arial Black",system-ui;font-variant-numeric:tabular-nums;color:#e5e7eb}
+.l2-tm.wait{font:800 12px system-ui;padding:12px 4px;color:#cbd5e1}
+.l2-tm.run{background:#fde68a;color:#451a03}
+.l2-tm.urgent{background:#ef4444;color:#fff;animation:urg .5s ease-in-out infinite alternate}
+@keyframes urg{to{transform:scale(1.04)}}
+.l2-bid{margin-top:8px;width:100%;padding:9px 4px;border-radius:14px;background:linear-gradient(#4ade80,#16a34a);color:#fff;border-bottom:4px solid #14532d;font-weight:900;font-size:15px;line-height:1.1}
+.l2-bid small{display:block;font-size:11px;opacity:.9}
+.l2-bid:disabled{background:#4b5563;border-bottom-color:#1f2937;color:#d1d5db}
+.lot2.mine .l2-bid:disabled{background:linear-gradient(#fde68a,#f59e0b);color:#451a03;border-bottom-color:#92400e}
+.l2-auto{margin-top:6px;width:100%;padding:7px 4px;border-radius:12px;background:rgba(0,0,0,.35);border:1px dashed rgba(255,255,255,.35);color:#e5e7eb;font-weight:800;font-size:11px}
+.l2-auto.on{background:#2dd4bf;color:#042f2e;border:1px solid #fff}
+.lot2.hot .l2-in{box-shadow:inset 0 0 0 2px rgba(253,230,138,.6)}
+#auction .au-rules{color:#ccfbf1}
+#auction .chat{background:rgba(11,46,43,.85);border-color:#2dd4bf}
+#auction .au-hbtn{background:#0b2e2b;border-color:#2dd4bf}
+.auto-now{margin:6px 0 10px;font-weight:800;color:var(--gold);font-size:13px}
+.auto-opts{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.auto-opts button{padding:14px;border-radius:12px;background:#1a1535;border:1px solid var(--line);color:#fff;font-weight:800;font-size:15px}
+.auto-opts button.on{border-color:var(--gold);color:var(--gold)}
+.auto-opts button.off{color:#ff8a8a}
 #busy{position:absolute;inset:0;background:rgba(10,7,30,.55);z-index:15;display:none;align-items:center;justify-content:center;font-weight:800}
 #busy.on{display:flex}
 .go:disabled,.up:disabled{opacity:.6}
@@ -506,6 +544,14 @@ button{font:inherit;color:inherit;border:0;cursor:pointer}
     </div>
   </div>
 
+  <div class="sheet" id="auto">
+    <div class="sheet-card">
+      <div class="sheet-h"><b id="autoT">Автоставка</b><button class="sheet-x" data-close="auto" aria-label="Закрыть">✕</button></div>
+      <div class="sheet-sub" id="autoSub"></div>
+      <div class="auto-now" id="autoNow"></div>
+      <div class="auto-opts" id="autoOpts"><button data-n="5">5 ставок</button><button data-n="10">10 ставок</button><button data-n="25">25 ставок</button><button data-n="0" class="off">Выключить</button></div>
+    </div>
+  </div>
   <div class="sheet" id="msgAct">
     <div class="sheet-card">
       <div class="sheet-h"><b id="msgActT">Сообщение</b><button class="sheet-x" data-close="msgAct" aria-label="Закрыть">✕</button></div>
@@ -1482,22 +1528,24 @@ function auRender(st){
     var lead=l.leader,mine=lead&&lead.tg_id===S.tg_id;
     var changed=lead&&AU.prevLeader[l.id]!==undefined&&AU.prevLeader[l.id]!==lead.tg_id;
     var payout=Math.floor(l.pot*0.9);
-    var leader=lead
-      ?'<div class="lot-leader'+(mine?' me':'')+'">'+avHTML(lead.photo,lead.name,'big',changed?'pop':'')+
-        '<div><div class="ln">'+esc(lead.name||'Игрок')+'</div><div class="ls">'+(mine?'Ты лидируешь':'Лидирует')+'</div></div></div>'
-      :'<div class="lot-leader"><div class="lot-empty">Ставок пока нет. Будь первым!</div></div>';
-    var recent=(l.recent||[]).map(function(b){
-      return '<div class="rb">'+avHTML(b.photo,b.name,'sm')+'<i>+'+b.amount+'</i></div>';}).join('');
+    var ava=lead?avHTML(lead.photo,lead.name,'l2-ava',changed?'pop':''):'<span class="av l2-ava none">?</span>';
+    var who=lead?'<div class="l2-name">'+(mine?'👑 Ты':'👑 '+esc(lead.name||'Игрок'))+'</div><div class="l2-id">'+(lead.username?'@'+esc(lead.username):'ID '+lead.tg_id)+'</div>'
+               :'<div class="l2-name dim">Ставок нет</div><div class="l2-id">будь первым!</div>';
     var can=!mine&&S.points>=l.min_bid;
-    var btn=mine?'Ты лидер, жди':(S.points<l.min_bid?'Нужно '+l.min_bid+' очков':'Ставка '+l.min_bid+' очков');
-    var last=l.last_winner?'<div class="lot-last">Прошлый раунд: '+avHTML(l.last_winner.photo,l.last_winner.name,'sm')+
-      esc(l.last_winner.name||'Игрок')+' забрал '+l.last_winner.payout+'</div>':'';
-    return '<div class="lot'+(l.ends_at?' hot':'')+'">'+
-      '<div class="lot-h"><div class="lot-t">'+esc(l.title)+'</div><div class="lot-timer" data-end="'+(l.ends_at||'')+'" data-bids="'+l.bids+'"></div></div>'+
-      '<div class="lot-pot"><span>Банк</span><b>'+l.pot+'</b>'+(l.pot?'<small>победитель получит '+payout+'</small>':'')+'</div>'+
-      leader+'<div class="lot-recent">'+recent+'</div>'+
-      '<button class="lot-bid" data-lot="'+l.id+'"'+(can?'':' disabled')+'>'+btn+'</button>'+last+'</div>';
+    var btn=mine?'Ты лидер':(S.points<l.min_bid?'Нужно '+l.min_bid:'Сделать ставку');
+    var auto=l.my_auto>0?'Автоставка: ещё '+l.my_auto:'Автоставка (выкл)';
+    var last=l.last_winner?'<div class="l2-last">🏆 '+esc(l.last_winner.name||'Игрок')+' +'+l.last_winner.payout+'</div>':'<div class="l2-last">&nbsp;</div>';
+    return '<div class="lot2'+(l.ends_at?' hot':'')+(mine?' mine':'')+'"><div class="l2-in">'+
+      '<div class="l2-h">'+esc(l.title)+'</div>'+last+
+      '<div class="l2-avw'+(lead?' on':'')+'">'+ava+'</div>'+who+
+      '<div class="l2-pot">'+l.pot+'</div><div class="l2-potl">'+(l.pot?'в банке · получит '+payout:'в банке')+'</div>'+
+      '<div class="l2-tm lot-timer" data-end="'+(l.ends_at||'')+'" data-bids="'+l.bids+'"></div>'+
+      '<button class="lot-bid l2-bid" data-lot="'+l.id+'"'+(can?'':' disabled')+'>'+btn+'<small>'+l.min_bid+' 💰</small></button>'+
+      '<button class="l2-auto'+(l.my_auto>0?' on':'')+'" data-auto="'+l.id+'">'+auto+'</button>'+
+      '</div></div>';
   }).join('');
+  Array.prototype.forEach.call(box.querySelectorAll('.l2-auto'),function(b){
+    b.onclick=function(){auAutoOpen(parseInt(b.dataset.auto,10));};});
   st.lots.forEach(function(l){
     if(l.leader&&AU.prevLeader[l.id]!==undefined&&AU.prevLeader[l.id]!==l.leader.tg_id&&l.leader.tg_id!==S.tg_id)sfx.click();
     AU.prevLeader[l.id]=l.leader?l.leader.tg_id:null;
@@ -1517,10 +1565,10 @@ function auTimers(){
   var now=Date.now()+AU.off;
   Array.prototype.forEach.call(document.querySelectorAll('.lot-timer'),function(t){
     var end=t.dataset.end,bids=+t.dataset.bids;
-    t.classList.remove('run','urgent');
-    if(!end){t.textContent=bids===1?'Ждём 2-ю ставку':'Нет ставок';return;}
+    t.classList.remove('run','urgent','wait');
+    if(!end){t.textContent=bids===1?'ждём 2-ю ставку':'нет ставок';t.classList.add('wait');return;}
     var s=Math.ceil((Date.parse(end)-now)/1000);
-    if(s<=0){t.textContent='Итоги…';return;}
+    if(s<=0){t.textContent='Итоги…';t.classList.add('wait');return;}
     t.textContent=Math.floor(s/60)+':'+('0'+(s%60)).slice(-2);
     t.classList.add(s<=10?'urgent':'run');
   });
@@ -1602,6 +1650,27 @@ function chDo(a,m){
   p.catch(function(e){toast(e.message);});
 }
 
+
+/* ---------- автоставка ---------- */
+var AUTO_LOT=0;
+function auAutoOpen(id){
+  if(!ONLINE){toast('Автоставка работает только в Telegram');return;}
+  var l=(AU.state&&AU.state.lots||[]).filter(function(x){return x.id===id;})[0];if(!l)return;
+  AUTO_LOT=id;sfx.click();
+  $('#autoT').textContent='Автоставка: '+l.title;
+  $('#autoSub').textContent='Когда тебя перебьют и до конца останется меньше 8 секунд, сервер сам сделает ставку за тебя — даже если игра закрыта. Каждая автоставка стоит '+l.min_bid+' очков.';
+  Array.prototype.forEach.call(document.querySelectorAll('#autoOpts button'),function(b){
+    b.classList.toggle('on',l.my_auto>0&&+b.dataset.n===l.my_auto);});
+  $('#autoNow').textContent=l.my_auto>0?'Сейчас включена: осталось '+l.my_auto+' ставок':'Сейчас выключена';
+  $('#auto').classList.add('on');
+}
+Array.prototype.forEach.call(document.querySelectorAll('#autoOpts button'),function(b){
+  b.onclick=function(){
+    var n=+b.dataset.n;$('#auto').classList.remove('on');
+    call('autobid',{lot:AUTO_LOT,count:n}).then(function(j){auRender(j.auction);haptic('medium');
+      toast(n?'Автоставка включена: до '+n+' ставок':'Автоставка выключена');},function(e){toast(e.message);});
+  };});
+
 /* ---------- история аукциона ---------- */
 $('#histOpen').onclick=function(){
   sfx.click();
@@ -1620,7 +1689,7 @@ $('#histOpen').onclick=function(){
 };
 Array.prototype.forEach.call(document.querySelectorAll('[data-close]'),function(b){
   b.onclick=function(){$('#'+b.dataset.close).classList.remove('on');};});
-['hist','msgAct'].forEach(function(id){$('#'+id).addEventListener('click',function(e){if(e.target.id===id)e.currentTarget.classList.remove('on');});});
+['hist','msgAct','auto'].forEach(function(id){$('#'+id).addEventListener('click',function(e){if(e.target.id===id)e.currentTarget.classList.remove('on');});});
 Array.prototype.forEach.call(document.querySelectorAll('#tabbar button'),function(b){
   b.onclick=function(){if(b.dataset.s!=='auction')renderMenu();show(b.dataset.s);sfx.click();};});
 $('#hcard').onclick=function(){renderMenu();show('upgrade');sfx.click();};
