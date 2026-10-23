@@ -577,6 +577,16 @@ button{font:inherit;color:inherit;border:0;cursor:pointer}
     </div>
   </div>
 
+  <div class="sheet" id="subGate">
+    <div class="sheet-card">
+      <div class="sheet-h"><b>Подпишись на канал</b><button class="sheet-x" id="subX" aria-label="Закрыть">✕</button></div>
+      <div class="sheet-sub">Чтобы играть, нужно быть подписанным на канал игры. Новости, подарки и розыгрыши — там.</div>
+      <button class="btn2 b-up" id="subOpen">Открыть канал</button>
+      <button class="btn2 b-ad" id="subDone">Я подписался — в бой</button>
+      <div class="sheet-note" id="subNote"></div>
+    </div>
+  </div>
+
   <div id="splash">
     <div class="sp-rays"></div>
     <svg class="sp-rk" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 150 80">
@@ -871,7 +881,8 @@ function call(action,extra){
   var body=Object.assign({action:action,initData:INIT},extra||{});
   return fetch(API_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)})
     .then(function(r){return r.json().catch(function(){return {};}).then(function(j){
-      if(!r.ok)throw new Error(j.error||('Ошибка сервера ('+r.status+')'));return j;});},
+      if(!r.ok){var er=new Error(j.error||('Ошибка сервера ('+r.status+')'));
+        if(j.need_sub){er.needSub=true;er.channel=j.channel||'';}throw er;}return j;});},
       function(){throw new Error('Нет связи с сервером. Проверь интернет или VPN и попробуй ещё раз.');});
 }
 var LKEY='korm_offline_v3';
@@ -1246,10 +1257,29 @@ el.foeBase.insertAdjacentHTML('beforeend',towerSVG(FOE_TOWER));
 btns[0].querySelector('.e').innerHTML='<img class="sk-hero" src="'+HERO_SRC+'" alt="">';
 btns[1].querySelector('.e').innerHTML='<span class="sk-rk">'+ROCKET_HTML+'</span>';
 
-function startBattle(){
+/* ---------- обязательная подписка на канал игры ---------- */
+var SUB_CH='';
+function subLink(){return 'https://t.me/'+(SUB_CH||'HOTEPA');}
+function openSubGate(ch,again){
+  if(ch)SUB_CH=ch;
+  $('#subNote').textContent=again?'Подписки пока не видно. Подпишись на канал, подожди пару секунд и нажми «Я подписался» ещё раз.':'';
+  $('#subGate').classList.add('on');
+}
+$('#subOpen').onclick=function(){
+  sfx.click();
+  try{if(tg&&tg.openTelegramLink){tg.openTelegramLink(subLink());return;}}catch(e){}
+  window.open(subLink(),'_blank');
+};
+$('#subDone').onclick=function(){$('#subGate').classList.remove('on');startBattle(true);};
+$('#subX').onclick=function(){$('#subGate').classList.remove('on');};
+$('#subGate').addEventListener('click',function(e){if(e.target.id==='subGate')$('#subGate').classList.remove('on');});
+
+function startBattle(retry){
   if(starting)return;starting=true;busy(true);sfx.click();
   API.start().then(function(bt){starting=false;busy(false);beginBattle(bt);},
-    function(e){starting=false;busy(false);toast(e.message);});
+    function(e){starting=false;busy(false);
+      if(e&&e.needSub){openSubGate(e.channel,retry===true);return;}
+      toast(e.message);});
 }
 function beginBattle(bt){
   BT=bt;
