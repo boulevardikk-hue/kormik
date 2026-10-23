@@ -912,8 +912,8 @@ var API={
 
 /* ---------- реклама Adsgram ---------- */
 /* номер рекламного блока из кабинета Adsgram.
-   55350 — тестовый блок (без модерации, показы не оплачиваются); после одобрения вернуть 55349 */
-var ADS_BLOCK_ID='55350';
+   55674 — блок платформы Kormash (на модерации); 55350 — тестовый блок (без модерации, показы не оплачиваются) */
+var ADS_BLOCK_ID='55674';
 var AD=null;
 try{if(ONLINE&&ADS_BLOCK_ID&&window.Adsgram)AD=window.Adsgram.init({blockId:ADS_BLOCK_ID});}catch(e){AD=null;}
 function adLabel(){return AD?'▶ Удвоить награду за рекламу':'Удвоить награду (реклама, заглушка)';}
